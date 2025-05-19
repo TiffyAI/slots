@@ -12,12 +12,14 @@
       margin: 0;
       padding: 0;
       display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
     .container {
       padding: 20px;
+      text-align: center;
     }
     #slot-machine {
       display: flex;
@@ -56,25 +58,17 @@
       background-image: url('spin.jpg');
     }
     @keyframes pulseGlow {
-      0% {
-        box-shadow: 0 0 5px #fff;
-      }
-      50% {
-        box-shadow: 0 0 20px #0ff;
-      }
-      100% {
-        box-shadow: 0 0 5px #fff;
-      }
+      0% { box-shadow: 0 0 5px #fff; }
+      50% { box-shadow: 0 0 20px #0ff; }
+      100% { box-shadow: 0 0 5px #fff; }
     }
     #result {
       margin-top: 20px;
       font-size: 24px;
       min-height: 50px;
-      text-align: center;
     }
     #specialEffect {
       margin-top: 20px;
-      text-align: center;
     }
     #specialEffect img {
       max-width: 300px;
@@ -108,7 +102,7 @@
 </head>
 <body>
   <div class="container">
-    <h1 style="text-align:center;">🎰 TiffyAI Slot Machine 🎰</h1>
+    <h1>🎰 TiffyAI Slot Machine 🎰</h1>
     <div id="slot-machine">
       <div class="reel"><img id="reel1" src="Keys.png" alt="Symbol 1" /></div>
       <div class="reel"><img id="reel2" src="Keys.png" alt="Symbol 2" /></div>
@@ -119,7 +113,6 @@
     <div id="specialEffect"></div>
   </div>
 
-  <!-- Audio Elements -->
   <audio id="spinSound" src="sparcle.wav" preload="auto"></audio>
   <audio id="winSound" src="jackpot.wav" preload="auto"></audio>
   <audio id="keySound" src="key-achievement.wav" preload="auto"></audio>
@@ -143,12 +136,10 @@
     const spinButton = document.getElementById('spinButton');
     const resultDiv = document.getElementById('result');
     const specialEffectDiv = document.getElementById('specialEffect');
-
     const spinSound = document.getElementById('spinSound');
     const winSound = document.getElementById('winSound');
     const keySound = document.getElementById('keySound');
 
-    // Function to update local storage
     function updateLocalStorage(key, value) {
       let current = parseInt(localStorage.getItem(key)) || 0;
       localStorage.setItem(key, current + value);
@@ -168,28 +159,26 @@
         spinResults.push(symbol.name);
       }
 
-      // Check for matching symbols
       if (spinResults.every((val, i, arr) => val === arr[0])) {
         const matchedSymbol = spinResults[0];
         resultDiv.textContent = `🎉 You got 3 ${matchedSymbol}s! 🎉`;
         winSound.play();
 
-        // Trigger special effects based on matched symbol
         let effectImage = '';
         let link = '';
         switch (matchedSymbol) {
           case 'Keys':
             keySound.play();
-            updateLocalStorage('blueKeys', 3);
+            updateLocalStorage('tiffyBlueKeys', 3);
             effectImage = 'keyhole.png';
             break;
           case 'TiffyAI':
-            updateLocalStorage('tiffyTokens', 1);
+            updateLocalStorage('gold', 2);
             effectImage = 'TiffyAI-Token.png';
             link = '/treasure';
             break;
           case 'GoldKey':
-            updateLocalStorage('goldKeys', 2);
+            updateLocalStorage('gold', 2);
             effectImage = 'Golden-Keys.jpg';
             break;
           case 'Lotto':
@@ -201,8 +190,6 @@
             break;
           case 'Wheel':
             effectImage = 'wheel.png';
-            break;
-          default:
             break;
         }
 
