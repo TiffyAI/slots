@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TiffyAI Slot Machine</title>
+  <style>
+    body {
+      background: #000;
+      color: #0ff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      text-shadow: 0 0 10px #0ff;
+    }
+    .slot-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .reel {
+      width: 100px;
+      height: 100px;
+      margin: 0 10px;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .reel img {
+      max-width: 80px;
+      max-height: 80px;
+    }
+    #spin-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #0ff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0ff;
+    }
+    #spin-btn:hover {
+      box-shadow: 0 0 20px #0ff;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+      text-shadow: 0 0 5px #0ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>TiffyAI Slot Machine</h1>
+  <div class="slot-container">
+    <div class="reel" id="reel1"><img src="treasure-slot.jpg" alt="Symbol" /></div>
+    <div class="reel" id="reel2"><img src="Reward3.jpg" alt="Symbol" /></div>
+    <div class="reel" id="reel3"><img src="Keys.png" alt="Symbol" /></div>
+    <div class="reel" id="reel4"><img src="TiffyAI-Token.png" alt="Symbol" /></div>
+    <div class="reel" id="reel5"><img src="lotto.jpg" alt="Symbol" /></div>
+  </div>
+  <button id="spin-btn">Spin</button>
+  <div id="result"></div>
+
+  <audio id="coin-sound" src="single-coin.wav"></audio>
+  <audio id="reward-sound" src="key-achievement.wav"></audio>
+  <audio id="jackpot-sound" src="jackpot.wav"></audio>
+
+  <script>
+    const symbols = [
+      'treasure-slot.jpg',
+      'Reward3.jpg',
+      'Keys.png',
+      'TiffyAI-Token.png',
+      'lotto.jpg',
+      'wheel.png'
+    ];
+
+    const reels = [
+      document.getElementById('reel1'),
+      document.getElementById('reel2'),
+      document.getElementById('reel3'),
+      document.getElementById('reel4'),
+      document.getElementById('reel5')
+    ];
+
+    const spinBtn = document.getElementById('spin-btn');
+    const resultDiv = document.getElementById('result');
+
+    const coinSound = document.getElementById('coin-sound');
+    const rewardSound = document.getElementById('reward-sound');
+    const jackpotSound = document.getElementById('jackpot-sound');
+
+    function spinReels() {
+      const results = [];
+      for (let i = 0; i < reels.length; i++) {
+        const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+        reels[i].innerHTML = `<img src="${symbol}" alt="Symbol" />`;
+        results.push(symbol);
+      }
+      return results;
+    }
+
+    function checkResults(results) {
+      const counts = {};
+      results.forEach(symbol => {
+        counts[symbol] = (counts[symbol] || 0) + 1;
+      });
+
+      if (counts['TiffyAI-Token.png'] === 3) {
+        jackpotSound.play();
+        return '🎉 JACKPOT! 3 Tiffy Tokens! 🎉';
+      }
+
+      for (let symbol in counts) {
+        if (counts[symbol] === 3) {
+          rewardSound.play();
+          return `✨ 3 of a kind: ${symbol} ✨`;
+        }
+      }
+
+      coinSound.play();
+      return 'Try again!';
+    }
+
+    spinBtn.addEventListener('click', () => {
+      const results = spinReels();
+      const message = checkResults(results);
+      resultDiv.textContent = message;
+    });
+  </script>
+</body>
+</html>
