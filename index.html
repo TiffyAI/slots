@@ -90,14 +90,20 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
-    #walletControls {
-      margin-top: 20px;
-    }
-    #walletControls button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
+    #walletButton {
+      width: 150px;
+      height: 50px;
+      border: none;
+      border-radius: 25px;
+      background: url('connect.jpg') no-repeat center center;
+      background-size: cover;
       cursor: pointer;
+      animation: pulseGlow 2s infinite;
+      margin: 20px auto;
+      display: block;
+    }
+    #walletButton:active {
+      transform: scale(0.95);
     }
     @media (max-width: 600px) {
       .reel {
@@ -131,10 +137,7 @@
     <button id="spinButton"></button>
     <div id="result"></div>
     <div id="specialEffect"></div>
-    <div id="walletControls">
-      <button id="connectWallet">Connect Wallet</button>
-      <button id="disconnectWallet">Disconnect Wallet</button>
-    </div>
+    <button id="walletButton"></button>
   </div>
 
   <audio id="spinSound" src="sparcle.wav" preload="auto"></audio>
@@ -165,6 +168,9 @@
     const spinSound = document.getElementById('spinSound');
     const winSound = document.getElementById('winSound');
     const keySound = document.getElementById('keySound');
+    const walletButton = document.getElementById('walletButton');
+
+    let isWalletConnected = false;
 
     function updateLocalStorage(key, value) {
       let current = parseInt(localStorage.getItem(key)) || 0;
@@ -245,9 +251,6 @@
               e.preventDefault();
               anchor.style.pointerEvents = 'none';
               anchor.style.opacity = '0.5';
-              window.location.href = link;
-            });
-          } else {
-            specialEffectDiv
-::contentReference[oaicite:32]{index=32}
+              window.location.href
+::contentReference[oaicite:24]{index=24}
  
