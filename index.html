@@ -2,223 +2,255 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Slot Machine Game</title>
+  <title>TiffyAI Slot Machine</title>
   <style>
     body {
-      background-color: #000;
+      background: url('backslot.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-    }
-
-    .slot-machine {
-      margin-top: 50px;
-    }
-
-    .reels {
       display: flex;
       justify-content: center;
-      margin-bottom: 20px;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
-
-    .reel {
-      width: 80px;
-      height: 80px;
-      margin: 0 5px;
-      background-color: #222;
-      border: 2px solid #555;
-      border-radius: 10px;
-      font-size: 2em;
-      line-height: 80px;
+    .container {
+      padding: 20px;
+      text-align: center;
     }
-
-    #spinButton {
-      width: 120px;
-      height: 120px;
-      background-color: #444;
-      border: none;
-      border-radius: 50%;
-      font-size: 1.2em;
-      color: #fff;
-      cursor: pointer;
-      margin-bottom: 20px;
-    }
-
-    #spinButton:hover {
-      background-color: #666;
-    }
-
-    .message {
-      font-size: 2em;
-      margin-top: 20px;
-      animation: pop 0.5s ease;
-    }
-
-    .neon-blue {
-      color: #0ff;
-      text-shadow: 0 0 5px #0ff, 0 0 10px #0ff;
-    }
-
-    .neon-pink {
-      color: #f0f;
-      text-shadow: 0 0 5px #f0f, 0 0 10px #f0f;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.5); }
-      100% { transform: scale(1); }
-    }
-
-    .rewards {
+    #slot-machine {
       display: flex;
       justify-content: center;
+      gap: 20px;
+      margin: 20px auto;
       flex-wrap: wrap;
-      margin-top: 20px;
     }
-
-    .reward {
+    .reel {
       width: 100px;
       height: 100px;
-      margin: 10px;
-      background-color: #333;
-      border: 2px solid #777;
+      border: 2px solid #fff;
       border-radius: 10px;
-      line-height: 100px;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .reel img {
+      max-width: 90px;
+      max-height: 90px;
+    }
+    #spinButton {
+      width: 100px;
+      height: 100px;
+      border: none;
+      border-radius: 50%;
+      background: url('spin1.jpg') no-repeat center center;
+      background-size: cover;
+      cursor: pointer;
+      animation: pulseGlow 2s infinite;
+      margin: 20px auto;
+      display: block;
+    }
+    #spinButton:active {
+      background-image: url('spin.jpg');
+    }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 5px #fff; }
+      50% { box-shadow: 0 0 20px #0ff; }
+      100% { box-shadow: 0 0 5px #fff; }
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 24px;
+      min-height: 50px;
+      color: #0ff;
+      text-shadow: 0 0 5px #0ff, 0 0 10px #f0f;
+      animation: pop 0.5s ease-in-out;
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    #specialEffect {
+      margin-top: 20px;
+    }
+    #specialEffect img {
+      max-width: 300px;
+      animation: float 2s ease-in-out infinite;
+      border: 5px solid #0ff;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #0ff;
       cursor: pointer;
     }
-
-    .reward.disabled {
-      opacity: 0.5;
-      pointer-events: none;
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
-
     #walletButton {
       width: 150px;
       height: 50px;
-      background-image: url('connect.jpg');
-      background-size: cover;
       border: none;
       border-radius: 25px;
+      background: url('connect.jpg') no-repeat center center;
+      background-size: cover;
       cursor: pointer;
-      margin-top: 20px;
-      animation: pop 0.5s ease;
+      animation: pulseGlow 2s infinite;
+      margin: 20px auto;
+      display: block;
     }
-
+    #walletButton:active {
+      transform: scale(0.95);
+    }
     @media (max-width: 600px) {
       .reel {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5em;
-        line-height: 60px;
-      }
-
-      #spinButton {
-        width: 100px;
-        height: 100px;
-        font-size: 1em;
-      }
-
-      .reward {
         width: 80px;
         height: 80px;
-        line-height: 80px;
       }
-
-      #walletButton {
-        width: 120px;
-        height: 40px;
+      .reel img {
+        max-width: 70px;
+        max-height: 70px;
+      }
+      #spinButton {
+        width: 80px;
+        height: 80px;
+      }
+      #specialEffect img {
+        max-width: 200px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="slot-machine">
-    <div class="reels">
-      <div class="reel" id="reel1">🍒</div>
-      <div class="reel" id="reel2">🍋</div>
-      <div class="reel" id="reel3">🍊</div>
-      <div class="reel" id="reel4">🍇</div>
-      <div class="reel" id="reel5">🍉</div>
+  <div class="container">
+    <h1>🎰 TiffyAI Slot Machine 🎰</h1>
+    <div id="slot-machine">
+      <div class="reel"><img id="reel1" src="Keys.png" alt="Symbol 1" /></div>
+      <div class="reel"><img id="reel2" src="Keys.png" alt="Symbol 2" /></div>
+      <div class="reel"><img id="reel3" src="Keys.png" alt="Symbol 3" /></div>
+      <div class="reel"><img id="reel4" src="Keys.png" alt="Symbol 4" /></div>
+      <div class="reel"><img id="reel5" src="Keys.png" alt="Symbol 5" /></div>
     </div>
-    <button id="spinButton">SPIN</button>
-    <div id="message" class="message"></div>
-    <div class="rewards">
-      <div class="reward" data-link="/treasure">Reward 1</div>
-      <div class="reward" data-link="/treasure">Reward 2</div>
-      <div class="reward" data-link="/treasure">Reward 3</div>
-    </div>
+    <button id="spinButton"></button>
+    <div id="result"></div>
+    <div id="specialEffect"></div>
     <button id="walletButton"></button>
   </div>
 
+  <audio id="spinSound" src="sparcle.wav" preload="auto"></audio>
+  <audio id="winSound" src="jackpot.wav" preload="auto"></audio>
+  <audio id="keySound" src="key-achievement.wav" preload="auto"></audio>
+
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const symbols = ['🍒', '🍋', '🍊', '🍇', '🍉'];
-      const reels = [
-        document.getElementById('reel1'),
-        document.getElementById('reel2'),
-        document.getElementById('reel3'),
-        document.getElementById('reel4'),
-        document.getElementById('reel5')
-      ];
-      const spinButton = document.getElementById('spinButton');
-      const message = document.getElementById('message');
-      const rewards = document.querySelectorAll('.reward');
-      const walletButton = document.getElementById('walletButton');
-      let isConnected = false;
+    const symbols = [
+      { name: 'Keys', image: 'Keys.png' },
+      { name: 'TiffyAI', image: 'TiffyAI-Token.png' },
+      { name: 'GoldKey', image: 'Golden-Keys.jpg' },
+      { name: 'Lotto', image: 'lotto.jpg' },
+      { name: 'Treasure', image: 'treasure-slot.jpg' },
+      { name: 'Wheel', image: 'wheel.png' }
+    ];
 
-      spinButton.addEventListener('click', () => {
-        // Spin reels
-        reels.forEach(reel => {
-          const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)];
-          reel.textContent = randomSymbol;
-        });
+    const reels = [
+      document.getElementById('reel1'),
+      document.getElementById('reel2'),
+      document.getElementById('reel3'),
+      document.getElementById('reel4'),
+      document.getElementById('reel5')
+    ];
 
-        // Check for win (simple example: all symbols match)
-        const firstSymbol = reels[0].textContent;
-        const isWin = reels.every(reel => reel.textContent === firstSymbol);
+    const spinButton = document.getElementById('spinButton');
+    const resultDiv = document.getElementById('result');
+    const specialEffectDiv = document.getElementById('specialEffect');
+    const spinSound = document.getElementById('spinSound');
+    const winSound = document.getElementById('winSound');
+    const keySound = document.getElementById('keySound');
+    const walletButton = document.getElementById('walletButton');
 
-        if (isWin) {
-          message.textContent = 'You Win!';
-          message.className = 'message neon-pink';
-        } else {
-          message.textContent = 'Try Again';
-          message.className = 'message neon-blue';
+    let isWalletConnected = false;
+
+    function updateLocalStorage(key, value) {
+      let current = parseInt(localStorage.getItem(key)) || 0;
+      localStorage.setItem(key, current + value);
+    }
+
+    spinButton.addEventListener('click', () => {
+      spinSound.play();
+      resultDiv.textContent = '';
+      specialEffectDiv.innerHTML = '';
+
+      const spinResults = [];
+      for (let i = 0; i < reels.length; i++) {
+        const randomIndex = Math.floor(Math.random() * symbols.length);
+        const symbol = symbols[randomIndex];
+        reels[i].src = symbol.image;
+        reels[i].alt = symbol.name;
+        spinResults.push(symbol.name);
+      }
+
+      const counts = {};
+      spinResults.forEach((symbol) => {
+        counts[symbol] = (counts[symbol] || 0) + 1;
+      });
+
+      let matchedSymbol = null;
+      for (const symbol in counts) {
+        if (counts[symbol] >= 3) {
+          matchedSymbol = symbol;
+          break;
         }
-      });
+      }
 
-      rewards.forEach(reward => {
-        reward.addEventListener('click', () => {
-          if (!reward.classList.contains('disabled')) {
-            window.location.href = reward.getAttribute('data-link');
-            reward.classList.add('disabled');
-          }
-        });
-      });
+      if (matchedSymbol) {
+        resultDiv.textContent = `🎉 You got ${counts[matchedSymbol]} ${matchedSymbol}s! 🎉`;
+        winSound.play();
 
-      walletButton.addEventListener('click', async () => {
-        if (typeof window.ethereum !== 'undefined') {
-          try {
-            if (!isConnected) {
-              await window.ethereum.request({ method: 'eth_requestAccounts' });
-              isConnected = true;
-              alert('Wallet Connected');
-            } else {
-              // MetaMask doesn't support programmatic disconnect
-              isConnected = false;
-              alert('Wallet Disconnected');
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        } else {
-          alert('MetaMask is not installed. Please install it to use this feature.');
+        let effectImage = '';
+        let link = '';
+        switch (matchedSymbol) {
+          case 'Keys':
+            keySound.play();
+            updateLocalStorage('tiffyBlueKeys', 3);
+            effectImage = 'keyhole.png';
+            break;
+          case 'TiffyAI':
+            updateLocalStorage('gold', 2);
+            effectImage = 'TiffyAI-Token.png';
+            link = '/treasure';
+            break;
+          case 'GoldKey':
+            updateLocalStorage('gold', 2);
+            effectImage = 'Golden-Keys.jpg';
+            break;
+          case 'Lotto':
+            effectImage = 'loading6.jpg';
+            link = '/treasure';
+            break;
+          case 'Treasure':
+            effectImage = 'open-treasure.gif';
+            link = '/treasure';
+            break;
+          case 'Wheel':
+            effectImage = 'wheel.png';
+            break;
         }
-      });
-    });
-  </script>
-</body>
-</html>
+
+        if (effectImage) {
+          const imgElement = document.createElement('img');
+          imgElement.src = effectImage;
+          imgElement.alt = matchedSymbol;
+          if (link) {
+            const anchor = document.createElement('a');
+            anchor.href = link;
+            anchor.appendChild(imgElement);
+            specialEffectDiv.appendChild(anchor);
+            anchor.addEventListener('click', (e) => {
+              e.preventDefault();
+              anchor.style.pointerEvents = 'none';
+              anchor.style.opacity = '0.5';
+              window.location.href
+::contentReference[oaicite:24]{index=24}
+ 
