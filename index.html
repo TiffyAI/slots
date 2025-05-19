@@ -3,7 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <title>TiffyAI Slot Machine</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
+    .slot-machine {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .reel {
+      width: 100px;
+      height: 100px;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      background: #111;
+    }
+    .reel img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 1s ease-out;
+    }
+    .spin-button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background: linear-gradient(90deg, #00ffff, #9055ff);
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffff;
+    }
+    .spin-button:hover {
+      box-shadow: 0 0 20px #00ffff;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 24px;
+      color: #0f0;
+      text-shadow: 0 0 5px #0f0;
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .overlay img {
+      max-width: 80%;
+      max-height: 80%;
+    }
+    @keyframes rain {
+      0% { transform: translateY(-100px); opacity: 1; }
+      100% { transform: translateY(100vh); opacity: 0; }
+    }
+  </style>
 </head>
 <body>
   <h1>TiffyAI Slot Machine</h1>
@@ -14,246 +97,134 @@
     <div class="reel" id="reel4"><img src="slots/TiffyAI-Token.png" alt="Symbol"></div>
     <div class="reel" id="reel5"><img src="slots/lotto.jpg" alt="Symbol"></div>
   </div>
+
   <button class="spin-button" id="spinButton">Spin</button>
   <div class="message" id="message"></div>
 
-  <!-- Audio Elements -->
   <audio id="keySound" src="slots/key-achievement.wav"></audio>
   <audio id="coinSound" src="slots/single-coin.wav"></audio>
   <audio id="jackpotSound" src="slots/jackpot.wav"></audio>
 
-  <!-- Overlay for Special Effects -->
   <div id="overlay" class="overlay"></div>
 
-  <script src="script.js"></script>
-</body>
-</html>
-body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  color: #fff;
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  overflow: hidden;
-}
+  <script>
+    const symbols = [
+      'slots/treasure-slot.jpg',
+      'slots/Reward3.jpg',
+      'slots/Keys.png',
+      'slots/TiffyAI-Token.png',
+      'slots/lotto.jpg',
+      'slots/wheel.png'
+    ];
 
-h1 {
-  margin-bottom: 20px;
-  color: #0ff;
-  text-shadow: 0 0 10px #0ff;
-}
+    const reels = [
+      document.getElementById('reel1'),
+      document.getElementById('reel2'),
+      document.getElementById('reel3'),
+      document.getElementById('reel4'),
+      document.getElementById('reel5')
+    ];
 
-.slot-machine {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+    const spinButton = document.getElementById('spinButton');
+    const message = document.getElementById('message');
+    const keySound = document.getElementById('keySound');
+    const coinSound = document.getElementById('coinSound');
+    const jackpotSound = document.getElementById('jackpotSound');
+    const overlay = document.getElementById('overlay');
 
-.reel {
-  width: 100px;
-  height: 100px;
-  border: 2px solid #0ff;
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
-  background: #111;
-}
+    function getRandomSymbol() {
+      return symbols[Math.floor(Math.random() * symbols.length)];
+    }
 
-.reel img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transition: transform 1s ease-out;
-}
+    function spinReels() {
+      message.textContent = '';
+      overlay.style.display = 'none';
+      overlay.innerHTML = '';
+      const results = [];
 
-.spin-button {
-  padding: 10px 20px;
-  font-size: 18px;
-  background: linear-gradient(90deg, #00ffff, #9055ff);
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 0 10px #00ffff;
-  transition: box-shadow 0.3s ease;
-}
+      reels.forEach((reel, i) => {
+        const img = reel.querySelector('img');
+        const newSymbol = getRandomSymbol();
+        results.push(newSymbol);
+        img.style.transform = 'translateY(-100%)';
+        setTimeout(() => {
+          img.src = newSymbol;
+          img.style.transform = 'translateY(0)';
+        }, 300 + i * 150);
+      });
 
-.spin-button:hover {
-  box-shadow: 0 0 20px #00ffff;
-}
+      setTimeout(() => checkResults(results), 1200);
+    }
 
-.message {
-  margin-top: 20px;
-  font-size: 24px;
-  color: #0f0;
-  text-shadow: 0 0 5px #0f0;
-}
+    function checkResults(results) {
+      const counts = {};
+      results.forEach(s => counts[s] = (counts[s] || 0) + 1);
 
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-.overlay img {
-  max-width: 80%;
-  max-height: 80%;
-}
-
-@keyframes rain {
-  0% { transform: translateY(-100px); opacity: 1; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
-const symbols = [
-  'slots/treasure-slot.jpg',
-  'slots/Reward3.jpg',
-  'slots/Keys.png',
-  'slots/TiffyAI-Token.png',
-  'slots/lotto.jpg',
-  'slots/wheel.png'
-];
-
-const reels = [
-  document.getElementById('reel1'),
-  document.getElementById('reel2'),
-  document.getElementById('reel3'),
-  document.getElementById('reel4'),
-  document.getElementById('reel5')
-];
-
-const spinButton = document.getElementById('spinButton');
-const message = document.getElementById('message');
-
-const keySound = document.getElementById('keySound');
-const coinSound = document.getElementById('coinSound');
-const jackpotSound = document.getElementById('jackpotSound');
-
-const overlay = document.getElementById('overlay');
-
-function getRandomSymbol() {
-  const index = Math.floor(Math.random() * symbols.length);
-  return symbols[index];
-}
-
-function spinReels() {
-  message.textContent = '';
-  overlay.style.display = 'none';
-  overlay.innerHTML = '';
-  const results = [];
-
-  reels.forEach((reel, index) => {
-    const img = reel.querySelector('img');
-    const newSymbol = getRandomSymbol();
-    results.push(newSymbol);
-
-    // Simulate spinning effect
-    img.style.transform = 'translateY(-100%)';
-    setTimeout(() => {
-      img.src = newSymbol;
-      img.style.transform = 'translateY(0)';
-    }, 500 + index * 200);
-  });
-
-  // Check results after spinning
-  setTimeout(() => {
-    checkResults(results);
-  }, 1500);
-}
-
-function checkResults(results) {
-  // Count occurrences of each symbol
-  const counts = {};
-  results.forEach(symbol => {
-    counts[symbol] = (counts[symbol] || 0) + 1;
-  });
-
-  // Check for jackpot: all symbols are TiffyAI-Token.png
-  if (results.every(symbol => symbol === 'slots/TiffyAI-Token.png')) {
-    message.textContent = '🎉 JACKPOT! 🎉';
-    jackpotSound.play();
-    triggerEffect('rain', 'slots/TiffyAI-Token.png');
-  }
-  // Check for 3 or more matching symbols
-  else {
-    let foundMatch = false;
-    for (const symbol in counts) {
-      if (counts[symbol] >= 3) {
-        message.textContent = '✨ You won! ✨';
-        if (symbol === 'slots/Keys.png') {
-          keySound.play();
-          triggerEffect('floating', 'slots/keyhole.png');
-        } else if (symbol === 'slots/Reward3.jpg') {
-          coinSound.play();
-          triggerEffect('display', 'slots/Golden-Keys.jpg');
-        } else if (symbol === 'slots/lotto.jpg') {
-          coinSound.play();
-          triggerEffect('display', 'slots/loading6.jpg');
-        } else if (symbol === 'slots/treasure-slot.jpg') {
-          coinSound.play();
-          triggerEffect('display', 'slots/open-treasure.gif');
-        } else if (symbol === 'slots/wheel.png') {
-          coinSound.play();
-          triggerEffect('display', 'slots/wheel.png');
-        } else {
-          coinSound.play();
+      if (results.every(s => s === 'slots/TiffyAI-Token.png')) {
+        message.textContent = 'JACKPOT!';
+        jackpotSound.play();
+        triggerEffect('rain', 'slots/TiffyAI-Token.png');
+      } else {
+        for (const symbol in counts) {
+          if (counts[symbol] >= 3) {
+            message.textContent = 'You matched 3!';
+            if (symbol === 'slots/Keys.png') {
+              keySound.play();
+              triggerEffect('floating', 'slots/keyhole.png');
+            } else if (symbol === 'slots/Reward3.jpg') {
+              coinSound.play();
+              triggerEffect('display', 'slots/Golden-Keys.jpg');
+            } else if (symbol === 'slots/lotto.jpg') {
+              coinSound.play();
+              triggerEffect('display', 'slots/loading6.jpg');
+            } else if (symbol === 'slots/treasure-slot.jpg') {
+              coinSound.play();
+              triggerEffect('display', 'slots/open-treasure.gif');
+            } else if (symbol === 'slots/wheel.png') {
+              coinSound.play();
+              triggerEffect('display', 'slots/wheel.png');
+            } else {
+              coinSound.play();
+            }
+            return;
+          }
         }
-        foundMatch = true;
-        break;
+        message.textContent = 'Try again!';
       }
     }
-    if (!foundMatch) {
-      message.textContent = 'Try again!';
+
+    function triggerEffect(type, imagePath) {
+      overlay.style.display = 'flex';
+      overlay.innerHTML = '';
+      if (type === 'floating') {
+        const img = document.createElement('img');
+        img.src = imagePath;
+        img.style.animation = 'float 2s infinite';
+        overlay.appendChild(img);
+      } else if (type === 'rain') {
+        for (let i = 0; i < 20; i++) {
+          const img = document.createElement('img');
+          img.src = imagePath;
+          img.style.position = 'absolute';
+          img.style.left = Math.random() * window.innerWidth + 'px';
+          img.style.top = '-100px';
+          img.style.width = '50px';
+          img.style.height = '50px';
+          img.style.animation = `rain ${Math.random() * 2 + 2}s linear forwards`;
+          overlay.appendChild(img);
+        }
+      } else if (type === 'display') {
+        const img = document.createElement('img');
+        img.src = imagePath;
+        overlay.appendChild(img);
+      }
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        overlay.innerHTML = '';
+      }, 3000);
     }
-  }
-}
 
-function triggerEffect(type, imagePath) {
-  overlay.style.display = 'flex';
-  if (type === 'floating') {
-    const img = document.createElement('img');
-    img.src = imagePath;
-    img.style.animation = 'float 2s infinite';
-    overlay.appendChild(img);
-  } else if (type === 'rain') {
-    for (let i = 0; i < 30; i++) {
-      const img = document.createElement('img');
-      img.src = imagePath;
-      img.style.position = 'absolute';
-      img.style.left = Math.random() * window.innerWidth + 'px';
-      img.style.top = '-100px';
-      img.style.width = '50px';
-      img.style.height = '50px';
-      img.style.animation = `rain ${Math.random() * 3 + 2}s linear forwards`;
-      overlay.appendChild(img);
-    }
-  } else if (type === 'display') {
-    const img = document.createElement('img');
-    img.src = imagePath;
-    overlay.appendChild(img);
-  }
-
-  // Hide overlay after 3 seconds
-  setTimeout(() => {
-    overlay.style.display = 'none';
-    overlay.innerHTML = '';
-  }, 3000);
-}
-
-spinButton.addEventListener('click', spinReels);
+    spinButton.addEventListener('click', spinReels);
+  </script>
+</body>
+</html>
